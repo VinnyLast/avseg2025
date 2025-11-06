@@ -1,52 +1,68 @@
-import { db, storage } from "./firebase.js";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-import {
-  collection,
-  addDoc,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+// Configuração do Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyDC38KMC9I2twZAA2jY-qfUXsXOLTX0W9Y",
+  authDomain: "avseg2025.firebaseapp.com",
+  projectId: "avseg2025",
+};
 
-const fileInput = document.getElementById("fileInput");
-const uploadBtn = document.getElementById("uploadBtn");
+// Inicializa Firebase e Firestore
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const form = document.getElementById("uploadForm");
+const fileInput = document.getElementById("photoInput");
 const gallery = document.getElementById("gallery");
 
-const imagesCollection = collection(db, "images");
-
-// Carregar imagens do Firestore
+// Função pra carregar as imagens
 async function loadGallery() {
+  gallery.innerHTML = "<p>Carregando...</p>";
+
+  const q = query(collection(db, "fotos"), orderBy("timestamp", "desc"));
+  const querySnapshot = await getDocs(q);
+
   gallery.innerHTML = "";
-  const snapshot = await getDocs(imagesCollection);
-  snapshot.forEach((doc) => {
+  querySnapshot.forEach((doc) => {
     const data = doc.data();
     const img = document.createElement("img");
-    img.src = data.url;
+    img.src = data.imageBase64;
+    img.alt = "Foto enviada";
+    img.classList.add("photo");
     gallery.appendChild(img);
   });
 }
 
-// Upload e salvar URL no Firestore
-uploadBtn.addEventListener("click", async () => {
+// Quando o usuário enviar o formulário
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
   const file = fileInput.files[0];
-  if (!file) {
-    alert("Selecione uma imagem primeiro!");
-    return;
-  }
+  if (!file) return alert("Selecione uma imagem primeiro!");
 
-  const fileRef = ref(storage, "images/" + file.name);
-  await uploadBytes(fileRef, file);
+  const reader = new FileReader();
 
-  const url = await getDownloadURL(fileRef);
+  reader.onload = async (event) => {
+    const imageBase64 = event.target.result;
 
-  await addDoc(imagesCollection, { url });
+    try {
+      await addDoc(collection(db, "fotos"), {
+        imageBase64,
+        timestamp: new Date(),
+      });
 
-  alert("Foto enviada com sucesso!");
-  fileInput.value = "";
-  loadGallery();
+      alert("Foto enviada com sucesso!");
+      fileInput.value = "";
+      loadGallery();
+    } catch (error) {
+      console.error("Erro ao enviar foto:", error);
+      alert("Erro ao enviar a foto.");
+    }
+  };
+
+  reader.readAsDataURL(file); // Converte imagem para Base64
 });
 
 loadGallery();

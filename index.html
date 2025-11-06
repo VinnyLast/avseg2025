@@ -7,6 +7,13 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <form id="uploadForm">
+  <input type="file" id="photoInput" accept="image/*" />
+  <button type="submit">Enviar Foto</button>
+</form>
+
+<div id="gallery" class="gallery"></div>
+
   <header>
     <h1>🎉 Álbum da Festa AVSEG 2025 🎉</h1>
     <p>Envie e veja as fotos do evento!</p>
@@ -24,5 +31,6 @@
 
   <script type="module" src="firebase.js"></script>
   <script type="module" src="script.js"></script>
+  
 </body>
 </html>

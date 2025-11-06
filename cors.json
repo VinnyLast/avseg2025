@@ -1,8 +1,8 @@
 [
   {
-    "origin": ["https://avseg2025.vercel.app", "http://localhost:5500"],
+    "origin": ["https://avseg2025.vercel.app"],
     "method": ["GET", "POST", "PUT", "DELETE"],
-    "maxAgeSeconds": 3600,
-    "responseHeader": ["Content-Type", "x-goog-resumable"]
+    "maxAgeSeconds": 3600
   }
 ]
+
