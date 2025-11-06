@@ -1,30 +1,35 @@
-import { storage } from "./firebase.js";
+import { db, storage } from "./firebase.js";
 import {
   ref,
   uploadBytes,
-  getDownloadURL,
-  listAll
+  getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
+
+import {
+  collection,
+  addDoc,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 const fileInput = document.getElementById("fileInput");
 const uploadBtn = document.getElementById("uploadBtn");
 const gallery = document.getElementById("gallery");
 
-const imagesRef = ref(storage, "images/");
+const imagesCollection = collection(db, "images");
 
-// Função para carregar imagens existentes
+// Carregar imagens do Firestore
 async function loadGallery() {
   gallery.innerHTML = "";
-  const list = await listAll(imagesRef);
-  for (const item of list.items) {
-    const url = await getDownloadURL(item);
+  const snapshot = await getDocs(imagesCollection);
+  snapshot.forEach((doc) => {
+    const data = doc.data();
     const img = document.createElement("img");
-    img.src = url;
+    img.src = data.url;
     gallery.appendChild(img);
-  }
+  });
 }
 
-// Upload de imagem
+// Upload e salvar URL no Firestore
 uploadBtn.addEventListener("click", async () => {
   const file = fileInput.files[0];
   if (!file) {
@@ -34,6 +39,11 @@ uploadBtn.addEventListener("click", async () => {
 
   const fileRef = ref(storage, "images/" + file.name);
   await uploadBytes(fileRef, file);
+
+  const url = await getDownloadURL(fileRef);
+
+  await addDoc(imagesCollection, { url });
+
   alert("Foto enviada com sucesso!");
   fileInput.value = "";
   loadGallery();

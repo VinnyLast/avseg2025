@@ -1,8 +1,9 @@
-// Import the functions you need from the SDKs you need
+// Importar Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
 
-// Configuração do Firebase da AVSEG
+// Configuração Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDC38KMC9I2twZAA2jY-qfUXsXOLTX0W9Y",
   authDomain: "avseg2025.firebaseapp.com",
@@ -12,6 +13,7 @@ const firebaseConfig = {
   appId: "1:624856699500:web:028b4a8cdbe56175bb3e49"
 };
 
-// Inicializa Firebase
-export const app = initializeApp(firebaseConfig);
+// Inicializa
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
 export const storage = getStorage(app);
