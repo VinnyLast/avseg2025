@@ -1,0 +1,52 @@
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: linear-gradient(90deg, #000, #ffcc00);
+  padding: 20px;
+  color: #000;
+}
+
+h1 {
+  color: #fff;
+}
+
+main {
+  margin-top: 30px;
+}
+
+button {
+  background-color: #ffcc00;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #e6b800;
+}
+
+#gallery {
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+#gallery img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border: 3px solid #ffcc00;
+  border-radius: 10px;
+}
