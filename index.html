@@ -1,31 +1,62 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Álbum AVSEG 2025</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header>
-    <h1>🎉 Álbum da Festa AVSEG 2025 🎉</h1>
-    <p>Envie suas fotos e compartilhe os melhores momentos!</p>
-  </header>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Álbum AVSEG 2025</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🎉 Álbum da Festa AVSEG 2025 🎉</h1>
+      <p>Envie suas fotos e compartilhe os melhores momentos!</p>
+    </header>
 
-  <!-- 📸 Formulário de upload -->
-  <section class="upload-section">
-    <form id="uploadForm">
-      <input type="file" id="photoInput" accept="image/*" />
-      <button type="submit">📤 Enviar Foto</button>
-    </form>
-  </section>
+    <!-- 📸 Formulário de upload -->
+    <section class="upload-section">
+      <form id="uploadForm">
+        <input type="file" id="photoInput" accept="image/*" required />
+        <input
+          type="text"
+          id="photoDesc"
+          placeholder="Descrição da foto (opcional)"
+        />
+        <button type="submit">Enviar</button>
+      </form>
+    </section>
 
-  <!-- 🖼️ Galeria de fotos -->
-  <section id="gallery" class="gallery">
-    <!-- As fotos aparecem aqui automaticamente -->
-  </section>
+    <!-- 🖼️ Galeria de fotos -->
+    <section id="gallery" class="gallery">
+      <!-- As fotos aparecem aqui automaticamente -->
+    </section>
+    <div id="gallery"></div>
+    <!-- Botão secreto -->
+    <div
+      id="admin-trigger"
+      style="
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+      "
+    ></div>
+    <!-- Modal para ampliar a foto -->
+    <div id="photoModal" class="modal">
+      <span class="close">&times;</span>
+      <img id="modalImage" class="modal-content" />
+      <div id="modalCaption"></div>
+    </div>
+    <!-- Botão de baixar todas (escondido até ativar admin) -->
+    <button id="download-btn" style="display: none">⬇️ Baixar todas</button>
 
-  <!-- Script -->
-  <script type="module" src="script.js"></script>
-</body>
+    <!-- Biblioteca JSZip -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- Script -->
+    <script type="module" src="script.js"></script>
+    <!-- Botão secreto no canto superior direito -->
+  </body>
 </html>
