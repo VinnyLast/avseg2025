@@ -61,7 +61,52 @@ document.getElementById("admin-trigger").addEventListener("click", () => {
   }
 });
 
-// ---- Carregar galeria ----
+// ---- Redimensionar imagem (resolve problemas no celular) ----
+function resizeImage(file, maxWidth = 1024, maxHeight = 1024) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      img.src = e.target.result;
+    };
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      let { width, height } = img;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width *= maxHeight / height;
+          height = maxHeight;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          const resizedFile = new File([blob], file.name, { type: "image/jpeg" });
+          resolve(resizedFile);
+        },
+        "image/jpeg",
+        0.8 // Qualidade 80%
+      );
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+// ---- Função para carregar galeria ----
 async function loadGallery() {
   gallery.innerHTML = "<p>Carregando...</p>";
 
@@ -79,7 +124,7 @@ async function loadGallery() {
     img.alt = "Foto enviada";
     img.classList.add("photo");
 
-    // Abre modal ao clicar
+    // Modal ao clicar
     img.addEventListener("click", () => {
       modal.style.display = "block";
       modalImg.src = data.imageBase64;
@@ -89,7 +134,7 @@ async function loadGallery() {
       `;
     });
 
-    // Botão de apagar (admin)
+    // Botão apagar (admin)
     const delBtn = document.createElement("button");
     delBtn.textContent = "🗑️";
     delBtn.classList.add("delete-btn");
@@ -106,38 +151,15 @@ async function loadGallery() {
     gallery.appendChild(imgContainer);
   });
 }
-// Função auxiliar para converter HEIC para JPEG
-async function convertToJpeg(file) {
-  return new Promise((resolve, reject) => {
-    if (!file.type.includes("heic")) return resolve(file); // já está OK
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const heic2any = await import("https://cdn.jsdelivr.net/npm/heic2any@0.0.3/dist/heic2any.min.js");
-        const blob = await heic2any.default({
-          blob: event.target.result,
-          toType: "image/jpeg",
-        });
-        resolve(new File([blob], file.name.replace(/\.heic$/i, ".jpg"), { type: "image/jpeg" }));
-      } catch (err) {
-        reject(err);
-      }
-    };
-    reader.onerror = reject;
-    reader.readAsArrayBuffer(file);
-  });
-}
 
 // ---- Enviar foto ----
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const fileInput = document.getElementById("photoInput");
-let file = fileInput.files[0];
-file = await convertToJpeg(file); // <-- adiciona essa linha
-
-  const description = descInput.value.trim();
+  let file = fileInput.files[0];
   if (!file) return alert("Selecione uma imagem primeiro!");
+
+  // Redimensiona para celular
+  file = await resizeImage(file);
 
   const reader = new FileReader();
   reader.onload = async (event) => {
@@ -146,7 +168,7 @@ file = await convertToJpeg(file); // <-- adiciona essa linha
       await addDoc(collection(db, "fotos"), {
         imageBase64,
         userName,
-        description,
+        description: descInput.value.trim(),
         timestamp: new Date(),
       });
       alert("Foto enviada com sucesso!");
