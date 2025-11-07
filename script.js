@@ -106,11 +106,36 @@ async function loadGallery() {
     gallery.appendChild(imgContainer);
   });
 }
+// Função auxiliar para converter HEIC para JPEG
+async function convertToJpeg(file) {
+  return new Promise((resolve, reject) => {
+    if (!file.type.includes("heic")) return resolve(file); // já está OK
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const heic2any = await import("https://cdn.jsdelivr.net/npm/heic2any@0.0.3/dist/heic2any.min.js");
+        const blob = await heic2any.default({
+          blob: event.target.result,
+          toType: "image/jpeg",
+        });
+        resolve(new File([blob], file.name.replace(/\.heic$/i, ".jpg"), { type: "image/jpeg" }));
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+}
 
 // ---- Enviar foto ----
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const file = fileInput.files[0];
+  const fileInput = document.getElementById("photoInput");
+let file = fileInput.files[0];
+file = await convertToJpeg(file); // <-- adiciona essa linha
+
   const description = descInput.value.trim();
   if (!file) return alert("Selecione uma imagem primeiro!");
 
