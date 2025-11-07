@@ -7,30 +7,25 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <form id="uploadForm">
-  <input type="file" id="photoInput" accept="image/*" />
-  <button type="submit">Enviar Foto</button>
-</form>
-
-<div id="gallery" class="gallery"></div>
-
   <header>
     <h1>🎉 Álbum da Festa AVSEG 2025 🎉</h1>
-    <p>Envie e veja as fotos do evento!</p>
+    <p>Envie suas fotos e compartilhe os melhores momentos!</p>
   </header>
 
-  <main>
-    <input type="file" id="fileInput" accept="image/*" />
-    <button id="uploadBtn">Enviar Foto</button>
-    <div id="gallery"></div>
-  </main>
+  <!-- 📸 Formulário de upload -->
+  <section class="upload-section">
+    <form id="uploadForm">
+      <input type="file" id="photoInput" accept="image/*" />
+      <button type="submit">📤 Enviar Foto</button>
+    </form>
+  </section>
 
-  <footer>
-    <p>Feito com 💛 por AVSEG</p>
-  </footer>
+  <!-- 🖼️ Galeria de fotos -->
+  <section id="gallery" class="gallery">
+    <!-- As fotos aparecem aqui automaticamente -->
+  </section>
 
-  <script type="module" src="firebase.js"></script>
+  <!-- Script -->
   <script type="module" src="script.js"></script>
-  
 </body>
 </html>
