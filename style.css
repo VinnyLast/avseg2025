@@ -12,21 +12,35 @@ body {
 /* Cabeçalho */
 header {
   background: linear-gradient(90deg, #000, #1a1a1a);
-  padding: 40px 20px;
+  padding: 20px 40px;
   box-shadow: 0 2px 8px rgba(255, 204, 0, 0.2);
   border-bottom: 2px solid #ffcc00;
 }
 
-h1 {
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* centraliza horizontalmente */
+  gap: 15px; /* espaço entre logo e h1 */
+}
+
+header h1 {
   color: #ffcc00;
   font-size: 2rem;
-  margin-bottom: 10px;
+  margin: 0;
 }
 
 header p {
   color: #ccc;
   font-size: 1rem;
+  margin-top: 8px;
 }
+
+.logo {
+  width: 60px; /* ajuste o tamanho da logo como quiser */
+  height: auto;
+}
+
 
 /* Seção de upload */
 .upload-section {
