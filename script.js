@@ -1,4 +1,4 @@
-// ========================
+// ======================== 
 // 🔥 Firebase imports
 // ========================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -132,10 +132,11 @@ async function loadGallery() {
     img.src = data.imageBase64;
     img.alt = "Foto enviada";
     img.classList.add("photo");
+    img.loading = "lazy"; // ⚡ carrega só quando aparece na tela
 
     // 📸 Modal
-    img.addEventListener("click", () => {
-      modal.style.display = "block";
+    img.addEventListener("click", (e) => {
+      modal.style.display = "flex";
       modalImg.src = data.imageBase64;
       modalCaption.innerHTML = `
         <p><strong>${data.userName || "Anônimo"}</strong></p>
@@ -194,23 +195,17 @@ form.addEventListener("submit", async (e) => {
 });
 
 // ========================
-// ❌ Modal fechar
+// ❌ Modal fechar (apenas se clicar fora da imagem)
 // ========================
-closeModal.onclick = () => (modal.style.display = "none");
-window.onclick = (event) => {
-  if (event.target === modal) modal.style.display = "none";
-};
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) modal.style.display = "none";
+});
 
 // ========================
 // ⬇️ Baixar todas as fotos (modo admin)
 // ========================
 downloadBtn.addEventListener("click", async () => {
   try {
-    if (typeof JSZip === "undefined") {
-      alert("Erro: biblioteca JSZip não carregada.");
-      return;
-    }
-
     const snapshot = await getDocs(collection(db, "fotos"));
     if (snapshot.empty) {
       alert("Nenhuma foto disponível para download.");
@@ -236,14 +231,12 @@ downloadBtn.addEventListener("click", async () => {
   }
 });
 
-// ========================
-// 🎉 Confete dourado animado
-// ========================
+// 🎉 Confete animado (mantido)
 const canvas = document.getElementById("confetti");
 const ctx = canvas.getContext("2d");
 let particles = [];
 const colors = ["#ffcc00", "#fff1a8", "#ffe066"];
-const maxParticles = 100;
+const maxParticles = 80; // 🔥 reduzido p/ performance
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -256,7 +249,7 @@ function createParticle() {
   return {
     x: Math.random() * canvas.width,
     y: Math.random() * -canvas.height,
-    size: Math.random() * 5 + 2,
+    size: Math.random() * 4 + 1,
     color: colors[Math.floor(Math.random() * colors.length)],
     speed: Math.random() * 2 + 1,
     angle: Math.random() * 360,
@@ -276,18 +269,12 @@ function drawParticles() {
 
     p.y += p.speed;
     p.angle += p.rotationSpeed;
-
-    if (p.y > canvas.height) {
-      p.y = -10;
-      p.x = Math.random() * canvas.width;
-    }
+    if (p.y > canvas.height) p.y = -10;
   }
   requestAnimationFrame(drawParticles);
 }
 
-for (let i = 0; i < maxParticles; i++) {
-  particles.push(createParticle());
-}
+for (let i = 0; i < maxParticles; i++) particles.push(createParticle());
 drawParticles();
 
 // 🚀 Inicia galeria
