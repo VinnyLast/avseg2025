@@ -1,4 +1,6 @@
-// Firebase imports
+// ========================
+// 🔥 Firebase imports
+// ========================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
   getFirestore,
@@ -11,32 +13,38 @@ import {
   doc,
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Configuração Firebase
+// ========================
+// ⚙️ Configuração Firebase
+// ========================
 const firebaseConfig = {
   apiKey: "AIzaSyDC38KMC9I2twZAA2jY-qfUXsXOLTX0W9Y",
   authDomain: "avseg2025.firebaseapp.com",
   projectId: "avseg2025",
 };
 
-// Inicializa Firebase e Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Referências
+// ========================
+// 🧩 Referências do DOM
+// ========================
 const form = document.getElementById("uploadForm");
 const fileInput = document.getElementById("photoInput");
 const descInput = document.getElementById("photoDesc");
 const gallery = document.getElementById("gallery");
-
 const modal = document.getElementById("photoModal");
 const modalImg = document.getElementById("modalImage");
 const modalCaption = document.getElementById("modalCaption");
 const closeModal = document.querySelector(".close");
+const adminTrigger = document.getElementById("admin-trigger");
+const downloadBtn = document.getElementById("download-btn");
 
 let userName = localStorage.getItem("userName");
 let adminMode = false;
 
-// ---- Pergunta nome ----
+// ========================
+// 👤 Pergunta o nome do usuário
+// ========================
 if (!userName) {
   userName = prompt("Qual é o seu nome?");
   if (userName && userName.trim() !== "") {
@@ -46,36 +54,9 @@ if (!userName) {
   }
 }
 
-// ---- LOGIN ADMIN (botão invisível canto direito) ----
-const adminTrigger = document.createElement("div");
-adminTrigger.id = "admin-trigger";
-adminTrigger.style.position = "fixed";
-adminTrigger.style.top = "10px";
-adminTrigger.style.right = "10px";
-adminTrigger.style.width = "40px";
-adminTrigger.style.height = "40px";
-adminTrigger.style.cursor = "pointer";
-adminTrigger.style.zIndex = "999";
-document.body.appendChild(adminTrigger);
-
-// Botão de download (criado dinamicamente)
-const downloadBtn = document.createElement("button");
-downloadBtn.id = "download-btn";
-downloadBtn.textContent = "📥 Baixar todas as fotos";
-downloadBtn.style.position = "fixed";
-downloadBtn.style.top = "60px";
-downloadBtn.style.right = "20px";
-downloadBtn.style.background = "gold";
-downloadBtn.style.border = "none";
-downloadBtn.style.padding = "10px 16px";
-downloadBtn.style.borderRadius = "8px";
-downloadBtn.style.cursor = "pointer";
-downloadBtn.style.fontWeight = "bold";
-downloadBtn.style.display = "none";
-downloadBtn.style.zIndex = "998";
-downloadBtn.style.boxShadow = "0 0 10px rgba(255, 204, 0, 0.4)";
-document.body.appendChild(downloadBtn);
-
+// ========================
+// 🔑 Ativar modo administrador
+// ========================
 adminTrigger.addEventListener("click", () => {
   const senha = prompt("Digite a senha do administrador:");
   if (senha === "avseg2025") {
@@ -85,21 +66,22 @@ adminTrigger.addEventListener("click", () => {
     document.querySelectorAll(".delete-btn").forEach((btn) => {
       btn.style.display = adminMode ? "block" : "none";
     });
+
     downloadBtn.style.display = adminMode ? "block" : "none";
   } else if (senha !== null) {
     alert("Senha incorreta!");
   }
 });
 
-// ---- Redimensionar imagem (resolve problemas no celular) ----
+// ========================
+// 📏 Redimensionar imagem (para celular)
+// ========================
 function resizeImage(file, maxWidth = 1024, maxHeight = 1024) {
   return new Promise((resolve) => {
     const img = new Image();
     const reader = new FileReader();
 
-    reader.onload = (e) => {
-      img.src = e.target.result;
-    };
+    reader.onload = (e) => (img.src = e.target.result);
 
     img.onload = () => {
       const canvas = document.createElement("canvas");
@@ -110,11 +92,9 @@ function resizeImage(file, maxWidth = 1024, maxHeight = 1024) {
           height *= maxWidth / width;
           width = maxWidth;
         }
-      } else {
-        if (height > maxHeight) {
-          width *= maxHeight / height;
-          height = maxHeight;
-        }
+      } else if (height > maxHeight) {
+        width *= maxHeight / height;
+        height = maxHeight;
       }
 
       canvas.width = width;
@@ -123,10 +103,7 @@ function resizeImage(file, maxWidth = 1024, maxHeight = 1024) {
       ctx.drawImage(img, 0, 0, width, height);
 
       canvas.toBlob(
-        (blob) => {
-          const resizedFile = new File([blob], file.name, { type: "image/jpeg" });
-          resolve(resizedFile);
-        },
+        (blob) => resolve(new File([blob], file.name, { type: "image/jpeg" })),
         "image/jpeg",
         0.8
       );
@@ -136,7 +113,9 @@ function resizeImage(file, maxWidth = 1024, maxHeight = 1024) {
   });
 }
 
-// ---- Função para carregar galeria ----
+// ========================
+// 🖼️ Carregar galeria
+// ========================
 async function loadGallery() {
   gallery.innerHTML = "<p>Carregando...</p>";
 
@@ -154,6 +133,7 @@ async function loadGallery() {
     img.alt = "Foto enviada";
     img.classList.add("photo");
 
+    // 📸 Modal
     img.addEventListener("click", () => {
       modal.style.display = "block";
       modalImg.src = data.imageBase64;
@@ -163,6 +143,7 @@ async function loadGallery() {
       `;
     });
 
+    // 🗑️ Botão apagar (modo admin)
     const delBtn = document.createElement("button");
     delBtn.textContent = "🗑️";
     delBtn.classList.add("delete-btn");
@@ -180,7 +161,9 @@ async function loadGallery() {
   });
 }
 
-// ---- Enviar foto ----
+// ========================
+// 📤 Enviar foto
+// ========================
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   let file = fileInput.files[0];
@@ -210,33 +193,54 @@ form.addEventListener("submit", async (e) => {
   reader.readAsDataURL(file);
 });
 
-// ---- Fechar modal ----
+// ========================
+// ❌ Modal fechar
+// ========================
 closeModal.onclick = () => (modal.style.display = "none");
 window.onclick = (event) => {
   if (event.target === modal) modal.style.display = "none";
 };
 
-// ---- Baixar todas as fotos (admin) ----
+// ========================
+// ⬇️ Baixar todas as fotos (modo admin)
+// ========================
 downloadBtn.addEventListener("click", async () => {
-  const snapshot = await getDocs(collection(db, "fotos"));
-  const zip = new JSZip();
-  for (const docSnap of snapshot.docs) {
-    const data = docSnap.data();
-    const base64 = data.imageBase64.split(",")[1];
-    const filename = `${data.userName || "sem_nome"}-${docSnap.id}.jpg`;
-    zip.file(filename, base64, { base64: true });
+  try {
+    if (typeof JSZip === "undefined") {
+      alert("Erro: biblioteca JSZip não carregada.");
+      return;
+    }
+
+    const snapshot = await getDocs(collection(db, "fotos"));
+    if (snapshot.empty) {
+      alert("Nenhuma foto disponível para download.");
+      return;
+    }
+
+    const zip = new JSZip();
+    for (const docSnap of snapshot.docs) {
+      const data = docSnap.data();
+      const base64 = data.imageBase64.split(",")[1];
+      const filename = `${data.userName || "sem_nome"}-${docSnap.id}.jpg`;
+      zip.file(filename, base64, { base64: true });
+    }
+
+    const content = await zip.generateAsync({ type: "blob" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(content);
+    a.download = "avseg_fotos.zip";
+    a.click();
+  } catch (err) {
+    console.error("Erro ao gerar ZIP:", err);
+    alert("Erro ao baixar as fotos. Tente novamente.");
   }
-  const content = await zip.generateAsync({ type: "blob" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(content);
-  a.download = "avseg_fotos.zip";
-  a.click();
 });
 
-// ---- Confete dourado animado ----
+// ========================
+// 🎉 Confete dourado animado
+// ========================
 const canvas = document.getElementById("confetti");
 const ctx = canvas.getContext("2d");
-
 let particles = [];
 const colors = ["#ffcc00", "#fff1a8", "#ffe066"];
 const maxParticles = 100;
@@ -286,4 +290,5 @@ for (let i = 0; i < maxParticles; i++) {
 }
 drawParticles();
 
+// 🚀 Inicia galeria
 loadGallery();

@@ -2,86 +2,80 @@
 <html lang="pt-BR">
   <head>
     <link rel="icon" href="images/logo.png">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Álbum AVSEG 2025</title>
     <link rel="stylesheet" href="style.css" />
+
+    <!-- ✅ Deixe o JSZip apenas UMA vez -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   </head>
+
   <body>
-<canvas id="confetti"></canvas>
+    <canvas id="confetti"></canvas>
 
     <header>
-  <div class="header-content">
-    <img src="images/logo.png" alt="Logo AVSEG" class="logo">
-    <h1>FESTA AVSEG 2025</h1>
-  </div>
-  <p>Envie suas fotos e veja as do pessoal!</p>
-</header>
-
+      <div class="header-content">
+        <img src="images/logo.png" alt="Logo AVSEG" class="logo">
+        <h1>FESTA AVSEG 2025</h1>
+      </div>
+      <p>Envie suas fotos e veja as do pessoal!</p>
+    </header>
 
     <!-- 📸 Formulário de upload -->
     <section class="upload-section">
       <form id="uploadForm">
         <input type="file" id="photoInput" accept="image/*" required />
-        <input
-          type="text"
-          id="photoDesc"
-          placeholder="Descrição da foto (opcional)"
-        />
+        <input type="text" id="photoDesc" placeholder="Descrição da foto (opcional)" />
         <button type="submit">Enviar</button>
       </form>
     </section>
 
     <!-- 🖼️ Galeria de fotos -->
-    <section id="gallery" class="gallery">
-      <!-- As fotos aparecem aqui automaticamente -->
-    </section>
-    <div id="gallery"></div>
-    <!-- Botão secreto -->
-    <div
-      id="admin-trigger"
-      style="
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        width: 25px;
-        height: 25px;
-        cursor: pointer;
-      "
-    ></div>
-    <!-- Modal para ampliar a foto -->
+    <section id="gallery" class="gallery"></section>
+
+    <!-- Modal de foto -->
     <div id="photoModal" class="modal">
       <span class="close">&times;</span>
       <img id="modalImage" class="modal-content" />
       <div id="modalCaption"></div>
     </div>
-    <!-- Botão de baixar todas (escondido até ativar admin) -->
-    <button id="download-btn" style="display: none">⬇️ Baixar todas</button>
 
-    <!-- Biblioteca JSZip -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Botão invisível para ativar modo admin -->
+    <div id="admin-trigger"></div>
 
-    <!-- Script -->
+    <!-- ✅ Botão de baixar todas as fotos -->
+    <button id="download-btn"
+      style="
+        display: none;
+        position: fixed;
+        top: 60px;
+        right: 20px;
+        background: gold;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        z-index: 999;
+        box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
+      ">
+      📥 Baixar todas as fotos
+    </button>
+
+    <!-- ✨ Brilhos decorativos -->
+    <script>
+      for (let i = 0; i < 20; i++) {
+        const sparkle = document.createElement("div");
+        sparkle.classList.add("sparkle");
+        sparkle.style.left = `${Math.random() * 100}vw`;
+        sparkle.style.animationDelay = `${Math.random() * 8}s`;
+        sparkle.style.opacity = Math.random();
+        document.body.appendChild(sparkle);
+      }
+    </script>
+
+    <!-- ✅ Script principal -->
     <script type="module" src="script.js"></script>
-    <!-- Botão secreto no canto superior direito -->
-     <script>
-  // ✨ Criar brilhos dourados animados
-  for (let i = 0; i < 20; i++) {
-    const sparkle = document.createElement("div");
-    sparkle.classList.add("sparkle");
-    sparkle.style.left = `${Math.random() * 100}vw`;
-    sparkle.style.animationDelay = `${Math.random() * 8}s`;
-    sparkle.style.opacity = Math.random();
-    document.body.appendChild(sparkle);
-  }
-</script>
-<!-- Botão invisível para ativar modo admin -->
-<div id="admin-trigger"></div>
-
-<!-- Botão para baixar todas as fotos -->
-<button id="download-btn">📥 Baixar todas as fotos</button>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
   </body>
 </html>
