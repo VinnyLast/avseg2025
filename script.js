@@ -207,3 +207,57 @@ document.getElementById("download-btn").addEventListener("click", async () => {
 });
 
 loadGallery();
+// === Confete dourado animado ===
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+const colors = ["#ffcc00", "#fff1a8", "#ffe066"];
+const maxParticles = 100;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function createParticle() {
+  return {
+    x: Math.random() * canvas.width,
+    y: Math.random() * -canvas.height,
+    size: Math.random() * 5 + 2,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    speed: Math.random() * 2 + 1,
+    angle: Math.random() * 360,
+    rotationSpeed: Math.random() * 2 - 1,
+  };
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let p of particles) {
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate((p.angle * Math.PI) / 180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+    ctx.restore();
+
+    p.y += p.speed;
+    p.angle += p.rotationSpeed;
+
+    if (p.y > canvas.height) {
+      p.y = -10;
+      p.x = Math.random() * canvas.width;
+    }
+  }
+  requestAnimationFrame(drawParticles);
+}
+
+// Inicializa confetes
+for (let i = 0; i < maxParticles; i++) {
+  particles.push(createParticle());
+}
+drawParticles();
+

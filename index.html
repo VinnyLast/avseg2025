@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
+    <link rel="icon" href="images/logo.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,13 +9,16 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+<canvas id="confetti"></canvas>
+
     <header>
-      <div class="header-content">
+  <div class="header-content">
     <img src="images/logo.png" alt="Logo AVSEG" class="logo">
-      <h1>FESTA DA AVSEG 2025</h1>
-      </div>
-      <p>Envie suas fotos e veja as do pessoal!</p>
-    </header>
+    <h1>FESTA AVSEG 2025</h1>
+  </div>
+  <p>Envie suas fotos e veja as do pessoal!</p>
+</header>
+
 
     <!-- 📸 Formulário de upload -->
     <section class="upload-section">
@@ -61,5 +65,17 @@
     <!-- Script -->
     <script type="module" src="script.js"></script>
     <!-- Botão secreto no canto superior direito -->
+     <script>
+  // ✨ Criar brilhos dourados animados
+  for (let i = 0; i < 20; i++) {
+    const sparkle = document.createElement("div");
+    sparkle.classList.add("sparkle");
+    sparkle.style.left = `${Math.random() * 100}vw`;
+    sparkle.style.animationDelay = `${Math.random() * 8}s`;
+    sparkle.style.opacity = Math.random();
+    document.body.appendChild(sparkle);
+  }
+</script>
+
   </body>
 </html>
