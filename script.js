@@ -163,12 +163,27 @@ async function loadGallery() {
 }
 
 // ========================
-// 📤 Enviar foto
+// 📤 Enviar foto (com trava de clique duplo)
 // ========================
+let enviando = false;
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  if (enviando) return; // impede clique duplo
+  enviando = true;
+
   let file = fileInput.files[0];
-  if (!file) return alert("Selecione uma imagem primeiro!");
+  if (!file) {
+    alert("Selecione uma imagem primeiro!");
+    enviando = false;
+    return;
+  }
+
+  // Mostra carregando visual
+  const btn = form.querySelector("button");
+  const originalText = btn.textContent;
+  btn.textContent = "Enviando...";
+  btn.disabled = true;
 
   file = await resizeImage(file);
 
@@ -185,14 +200,19 @@ form.addEventListener("submit", async (e) => {
       alert("Foto enviada com sucesso!");
       fileInput.value = "";
       descInput.value = "";
-      loadGallery();
+      await loadGallery();
     } catch (error) {
       console.error("Erro ao enviar foto:", error);
       alert("Erro ao enviar a foto.");
+    } finally {
+      btn.textContent = originalText;
+      btn.disabled = false;
+      enviando = false;
     }
   };
   reader.readAsDataURL(file);
 });
+
 
 // ========================
 // ❌ Modal fechar (apenas se clicar fora da imagem)
