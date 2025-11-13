@@ -46,16 +46,46 @@ if (!userName) {
   }
 }
 
-// ---- LOGIN ADMIN ----
-document.getElementById("admin-trigger").addEventListener("click", () => {
+// ---- LOGIN ADMIN (botão invisível canto direito) ----
+const adminTrigger = document.createElement("div");
+adminTrigger.id = "admin-trigger";
+adminTrigger.style.position = "fixed";
+adminTrigger.style.top = "10px";
+adminTrigger.style.right = "10px";
+adminTrigger.style.width = "40px";
+adminTrigger.style.height = "40px";
+adminTrigger.style.cursor = "pointer";
+adminTrigger.style.zIndex = "999";
+document.body.appendChild(adminTrigger);
+
+// Botão de download (criado dinamicamente)
+const downloadBtn = document.createElement("button");
+downloadBtn.id = "download-btn";
+downloadBtn.textContent = "📥 Baixar todas as fotos";
+downloadBtn.style.position = "fixed";
+downloadBtn.style.top = "60px";
+downloadBtn.style.right = "20px";
+downloadBtn.style.background = "gold";
+downloadBtn.style.border = "none";
+downloadBtn.style.padding = "10px 16px";
+downloadBtn.style.borderRadius = "8px";
+downloadBtn.style.cursor = "pointer";
+downloadBtn.style.fontWeight = "bold";
+downloadBtn.style.display = "none";
+downloadBtn.style.zIndex = "998";
+downloadBtn.style.boxShadow = "0 0 10px rgba(255, 204, 0, 0.4)";
+document.body.appendChild(downloadBtn);
+
+adminTrigger.addEventListener("click", () => {
   const senha = prompt("Digite a senha do administrador:");
   if (senha === "avseg2025") {
-    adminMode = true;
-    alert("Modo administrador ativado!");
+    adminMode = !adminMode;
+    alert(adminMode ? "Modo administrador ativado!" : "Modo administrador desativado.");
+
     document.querySelectorAll(".delete-btn").forEach((btn) => {
-      btn.style.display = "block";
+      btn.style.display = adminMode ? "block" : "none";
     });
-    document.getElementById("download-btn").style.display = "block";
+    downloadBtn.style.display = adminMode ? "block" : "none";
   } else if (senha !== null) {
     alert("Senha incorreta!");
   }
@@ -98,7 +128,7 @@ function resizeImage(file, maxWidth = 1024, maxHeight = 1024) {
           resolve(resizedFile);
         },
         "image/jpeg",
-        0.8 // Qualidade 80%
+        0.8
       );
     };
 
@@ -124,7 +154,6 @@ async function loadGallery() {
     img.alt = "Foto enviada";
     img.classList.add("photo");
 
-    // Modal ao clicar
     img.addEventListener("click", () => {
       modal.style.display = "block";
       modalImg.src = data.imageBase64;
@@ -134,11 +163,10 @@ async function loadGallery() {
       `;
     });
 
-    // Botão apagar (admin)
     const delBtn = document.createElement("button");
     delBtn.textContent = "🗑️";
     delBtn.classList.add("delete-btn");
-    if (adminMode) delBtn.style.display = "block";
+    delBtn.style.display = adminMode ? "block" : "none";
     delBtn.addEventListener("click", async () => {
       if (confirm("Deseja apagar esta foto?")) {
         await deleteDoc(doc(db, "fotos", docSnap.id));
@@ -158,7 +186,6 @@ form.addEventListener("submit", async (e) => {
   let file = fileInput.files[0];
   if (!file) return alert("Selecione uma imagem primeiro!");
 
-  // Redimensiona para celular
   file = await resizeImage(file);
 
   const reader = new FileReader();
@@ -190,7 +217,7 @@ window.onclick = (event) => {
 };
 
 // ---- Baixar todas as fotos (admin) ----
-document.getElementById("download-btn").addEventListener("click", async () => {
+downloadBtn.addEventListener("click", async () => {
   const snapshot = await getDocs(collection(db, "fotos"));
   const zip = new JSZip();
   for (const docSnap of snapshot.docs) {
@@ -206,8 +233,7 @@ document.getElementById("download-btn").addEventListener("click", async () => {
   a.click();
 });
 
-loadGallery();
-// === Confete dourado animado ===
+// ---- Confete dourado animado ----
 const canvas = document.getElementById("confetti");
 const ctx = canvas.getContext("2d");
 
@@ -255,9 +281,9 @@ function drawParticles() {
   requestAnimationFrame(drawParticles);
 }
 
-// Inicializa confetes
 for (let i = 0; i < maxParticles; i++) {
   particles.push(createParticle());
 }
 drawParticles();
 
+loadGallery();
