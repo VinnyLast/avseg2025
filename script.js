@@ -11,6 +11,8 @@ import {
   orderBy,
   deleteDoc,
   doc,
+  limit,
+  startAfter
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // ========================
@@ -114,17 +116,52 @@ function resizeImage(file, maxWidth = 1024, maxHeight = 1024) {
 }
 
 // ========================
-// 🖼️ Carregar galeria
+// ⚡ Paginação + Infinite Scroll
 // ========================
-async function loadGallery() {
-  gallery.innerHTML = "<p>Carregando...</p>";
+let lastVisible = null;
+let loadingMore = false;
+const PAGE_SIZE = 20;
 
-  const q = query(collection(db, "fotos"), orderBy("timestamp", "desc"));
-  const querySnapshot = await getDocs(q);
+async function loadGallery(initialLoad = false) {
+  if (loadingMore) return;
+  loadingMore = true;
 
-  gallery.innerHTML = "";
-  querySnapshot.forEach((docSnap) => {
+  if (initialLoad) {
+    gallery.innerHTML = "<p>Carregando...</p>";
+    lastVisible = null;
+  }
+
+  let q;
+
+  if (initialLoad || !lastVisible) {
+    q = query(
+      collection(db, "fotos"),
+      orderBy("timestamp", "desc"),
+      limit(PAGE_SIZE)
+    );
+  } else {
+    q = query(
+      collection(db, "fotos"),
+      orderBy("timestamp", "desc"),
+      startAfter(lastVisible),
+      limit(PAGE_SIZE)
+    );
+  }
+
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    loadingMore = false;
+    return;
+  }
+
+  lastVisible = snapshot.docs[snapshot.docs.length - 1];
+
+  if (initialLoad) gallery.innerHTML = "";
+
+  snapshot.forEach((docSnap) => {
     const data = docSnap.data();
+
     const imgContainer = document.createElement("div");
     imgContainer.classList.add("photo-item");
 
@@ -132,10 +169,9 @@ async function loadGallery() {
     img.src = data.imageBase64;
     img.alt = "Foto enviada";
     img.classList.add("photo");
-    img.loading = "lazy"; // ⚡ carrega só quando aparece na tela
+    img.loading = "lazy";
 
-    // 📸 Modal
-    img.addEventListener("click", (e) => {
+    img.addEventListener("click", () => {
       modal.style.display = "flex";
       modalImg.src = data.imageBase64;
       modalCaption.innerHTML = `
@@ -144,11 +180,11 @@ async function loadGallery() {
       `;
     });
 
-    // 🗑️ Botão apagar (modo admin)
     const delBtn = document.createElement("button");
     delBtn.textContent = "🗑️";
     delBtn.classList.add("delete-btn");
     delBtn.style.display = adminMode ? "block" : "none";
+
     delBtn.addEventListener("click", async () => {
       if (confirm("Deseja apagar esta foto?")) {
         await deleteDoc(doc(db, "fotos", docSnap.id));
@@ -160,16 +196,23 @@ async function loadGallery() {
     imgContainer.appendChild(delBtn);
     gallery.appendChild(imgContainer);
   });
+
+  loadingMore = false;
 }
 
+window.addEventListener("scroll", () => {
+  const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 500;
+  if (nearBottom) loadGallery(false);
+});
+
 // ========================
-// 📤 Enviar foto (com trava de clique duplo)
+// 📤 Enviar foto
 // ========================
 let enviando = false;
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (enviando) return; // impede clique duplo
+  if (enviando) return;
   enviando = true;
 
   let file = fileInput.files[0];
@@ -179,7 +222,6 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Mostra carregando visual
   const btn = form.querySelector("button");
   const originalText = btn.textContent;
   btn.textContent = "Enviando...";
@@ -190,6 +232,7 @@ form.addEventListener("submit", async (e) => {
   const reader = new FileReader();
   reader.onload = async (event) => {
     const imageBase64 = event.target.result;
+
     try {
       await addDoc(collection(db, "fotos"), {
         imageBase64,
@@ -197,10 +240,12 @@ form.addEventListener("submit", async (e) => {
         description: descInput.value.trim(),
         timestamp: new Date(),
       });
+
       alert("Foto enviada com sucesso!");
       fileInput.value = "";
       descInput.value = "";
-      await loadGallery();
+
+      await loadGallery(true);
     } catch (error) {
       console.error("Erro ao enviar foto:", error);
       alert("Erro ao enviar a foto.");
@@ -210,19 +255,19 @@ form.addEventListener("submit", async (e) => {
       enviando = false;
     }
   };
+
   reader.readAsDataURL(file);
 });
 
-
 // ========================
-// ❌ Modal fechar (apenas se clicar fora da imagem)
+// ❌ Modal fechar
 // ========================
 modal.addEventListener("click", (e) => {
   if (e.target === modal) modal.style.display = "none";
 });
 
 // ========================
-// ⬇️ Baixar todas as fotos (modo admin)
+// ⬇️ Baixar todas as fotos
 // ========================
 downloadBtn.addEventListener("click", async () => {
   try {
@@ -251,12 +296,12 @@ downloadBtn.addEventListener("click", async () => {
   }
 });
 
-// 🎉 Confete animado (mantido)
+// 🎉 Confete animado
 const canvas = document.getElementById("confetti");
 const ctx = canvas.getContext("2d");
 let particles = [];
 const colors = ["#ffcc00", "#fff1a8", "#ffe066"];
-const maxParticles = 80; // 🔥 reduzido p/ performance
+const maxParticles = 80;
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -298,4 +343,4 @@ for (let i = 0; i < maxParticles; i++) particles.push(createParticle());
 drawParticles();
 
 // 🚀 Inicia galeria
-loadGallery();
+loadGallery(true);
