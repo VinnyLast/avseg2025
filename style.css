@@ -5,30 +5,27 @@
   font-weight: bold;
 }
 
-/* ===== Reset e base ===== */
+/* ===== Reset ===== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* ===== Corpo ===== */
 body {
+  background: url("images/fundo.png") center/cover no-repeat, #ffffff;
   font-family: "Poppins", sans-serif;
-  background: radial-gradient(circle at top, #1a1a1a 0%, #000 90%);
-  color: #fff;
-  text-align: center;
-  overflow-x: hidden;
+  color: #333;
   min-height: 100vh;
-  animation: bgPulse 10s ease-in-out infinite alternate;
+  text-align: center;
 }
 
-@keyframes bgPulse {
-  0% {
-    background: radial-gradient(circle at top, #1a1a1a 0%, #000 90%);
-  }
-  100% {
-    background: radial-gradient(circle at bottom, #2a2a2a 0%, #000 90%);
-  }
+
+@keyframes softGold {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
 }
 
 /* ===== Confete ===== */
@@ -41,72 +38,92 @@ body {
 
 /* ===== Cabeçalho ===== */
 header {
-  background: linear-gradient(90deg, #000, #1a1a1a);
-  padding: 20px;
-  border-bottom: 2px solid #ffcc00;
-  box-shadow: 0 2px 10px rgba(255, 204, 0, 0.3);
+  background: linear-gradient(135deg, #d4af37, #b8860b, #f5d76e) !important;
+  padding: 18px 0;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   position: sticky;
   top: 0;
   z-index: 10;
+
+  /* remove totalmente transparência */
+  backdrop-filter: none !important;
+  background-blend-mode: normal !important;
+
+  background-size: 200% 200%;
+  animation: goldFlow 8s ease infinite;
 }
+
+
+
+@keyframes goldFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 
 .header-content {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 18px;
 }
 
+/* ===== Logo com brilho mais forte ===== */
 .logo {
-  width: 60px;
+  width: 70px;
   height: auto;
-  filter: drop-shadow(0 0 6px rgba(255, 204, 0, 0.6));
-  animation: pulseGlow 3s ease-in-out infinite;
+  filter: 
+    drop-shadow(0 0 8px rgba(255,255,255,0.9))
+    drop-shadow(0 0 14px rgba(255,215,130,0.7));
+  transition: transform 0.3s ease;
 }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    filter: drop-shadow(0 0 6px rgba(255, 204, 0, 0.5))
-            drop-shadow(0 0 12px rgba(255, 255, 150, 0.3));
-  }
-  50% {
-    filter: drop-shadow(0 0 12px rgba(255, 230, 100, 0.8))
-            drop-shadow(0 0 20px rgba(255, 255, 180, 0.6));
-  }
+.logo:hover {
+  transform: scale(1.05);
 }
-
+/* ===== Título com dourado MUITO mais vivo ===== */
 header h1 {
   font-family: "LemonMilk", sans-serif;
-  font-size: 2.3rem;
-  background: linear-gradient(90deg, #ffcc00, #fff1a8, #ffcc00);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 300%;
-  animation: shine 6s linear infinite;
-  text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+  font-size: 2.6rem;
+  color: #ffffff; /* totalmente branco */
+  text-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.9),
+    0 0 18px rgba(255, 215, 80, 0.8), 
+    0 0 30px rgba(255, 200, 50, 0.5);
+
+  letter-spacing: 1px;
 }
+
 
 @keyframes shine {
   0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
+  100% { background-position: 200% 50%; }
 }
 
 header p {
   margin-top: 8px;
-  color: #fff6b0;
-  font-size: 1rem;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-shadow: 
+    0 0 6px rgba(255,255,255,0.7),
+    0 0 12px rgba(255,215,80,0.4);
 }
+
 
 /* ===== Seção de upload ===== */
 .upload-section {
-  background: rgba(17, 17, 17, 0.9);
+  background: rgba(255, 255, 255, 0.9);
   padding: 25px;
   border-radius: 15px;
   max-width: 420px;
   margin: 30px auto 20px;
-  box-shadow: 0 0 15px rgba(255, 204, 0, 0.25);
-  backdrop-filter: blur(6px);
+  border: 1px solid #caa32c;
+  box-shadow: 0 0 20px rgba(202, 163, 44, 0.25);
+  backdrop-filter: blur(7px);
 }
 
 #uploadForm {
@@ -118,43 +135,43 @@ header p {
 
 input[type="file"],
 #photoDesc {
-  background: #1c1c1c;
-  border: 1px solid #ffcc00;
-  color: #fff;
+  background: #fff;
+  border: 1px solid #caa32c;
+  color: #333;
   padding: 10px;
   border-radius: 8px;
   width: 100%;
   font-size: 0.9rem;
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow 0.25s ease;
 }
 
 input[type="file"]:hover,
 #photoDesc:focus {
-  box-shadow: 0 0 8px rgba(255, 204, 0, 0.5);
+  box-shadow: 0 0 10px rgba(202, 163, 44, 0.4);
   outline: none;
 }
 
 button {
-  background: linear-gradient(90deg, #ffcc00, #ffe066);
+  background: linear-gradient(90deg, #caa32c, #ffdf74, #caa32c);
   color: #000;
   border: none;
   border-radius: 8px;
   font-weight: bold;
   padding: 10px 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(255, 204, 0, 0.6);
+  transform: scale(1.07);
+  box-shadow: 0 0 15px rgba(202, 163, 44, 0.6);
 }
 
 /* ===== Galeria ===== */
 #gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 10px;
+  gap: 12px;
   padding: 20px;
   max-width: 900px;
   margin: 0 auto 50px;
@@ -166,15 +183,16 @@ button:hover {
   width: 100%;
   aspect-ratio: 1/1;
   border-radius: 14px;
-  border: 2px solid rgba(255, 215, 0, 0.6);
+  border: 2px solid #caa32c;
   overflow: hidden;
-  background: #000;
+  background: #fff;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 0 8px rgba(255, 204, 0, 0.3);
+  box-shadow: 0 0 12px rgba(202, 163, 44, 0.2);
 }
 
 .photo-item:hover {
-  transform: scale(1.04);
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(202, 163, 44, 0.45);
 }
 
 .photo {
@@ -182,7 +200,6 @@ button:hover {
   height: 100%;
   object-fit: cover;
   border-radius: 12px;
-  display: block;
   cursor: pointer;
 }
 
@@ -191,7 +208,7 @@ button:hover {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.95);
+  background: rgba(255, 255, 255, 0.97);
   z-index: 9999;
   justify-content: center;
   align-items: center;
@@ -203,25 +220,25 @@ button:hover {
   max-width: 90%;
   max-height: 75vh;
   border-radius: 12px;
-  border: 2px solid #ffcc00;
-  box-shadow: 0 0 30px rgba(255, 204, 0, 0.4);
+  border: 3px solid #caa32c;
+  box-shadow: 0 0 35px rgba(202, 163, 44, 0.45);
 }
 
 #modalCaption {
-  color: #fff;
-  margin: 10px auto 25px;
+  color: #6a5300;
+  margin: 12px auto 25px;
   font-size: 0.95rem;
   max-width: 90%;
   line-height: 1.4;
 }
 
-/* ===== Botões ===== */
+/* ===== Botões flutuantes ===== */
 #admin-trigger {
   position: fixed;
   top: 10px;
   right: 10px;
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   background: transparent;
   cursor: pointer;
   z-index: 10000;
@@ -229,9 +246,9 @@ button:hover {
 
 #download-btn {
   position: fixed;
-  top: 60px;
+  top: 65px;
   right: 20px;
-  background: gold;
+  background: linear-gradient(90deg, #caa32c, #ffdf74);
   border: none;
   padding: 8px 12px;
   border-radius: 8px;
@@ -239,7 +256,7 @@ button:hover {
   font-weight: bold;
   display: none;
   z-index: 998;
-  box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
+  box-shadow: 0 0 10px rgba(202, 163, 44, 0.5);
   transition: transform 0.2s ease;
 }
 
@@ -247,50 +264,13 @@ button:hover {
   transform: scale(1.05);
 }
 
-/* ===== Responsividade ===== */
-@media (max-width: 600px) {
-  header h1 {
-    font-size: 1.8rem;
-  }
-
-  header p {
-    font-size: 0.9rem;
-  }
-
-  .upload-section {
-    width: 90%;
-    padding: 18px;
-  }
-
-  #gallery {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 8px;
-    padding: 10px;
-  }
-
-  .photo-item {
-    border-radius: 10px;
-  }
-
-  .photo {
-    border-radius: 10px;
-  }
-
-  .modal-content {
-    max-width: 95%;
-    max-height: 75vh;
-  }
-
-  #modalCaption {
-    font-size: 0.85rem;
-  }
-}
+/* ===== Botão deletar ===== */
 .delete-btn {
   position: absolute;
   top: 6px;
   right: 6px;
-  background: rgba(0, 0, 0, 0.7);
-  color: #ffcc00;
+  background: rgba(255, 255, 255, 0.9);
+  color: #caa32c;
   border: none;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -302,6 +282,26 @@ button:hover {
 }
 
 .delete-btn:hover {
-  background: rgba(255, 0, 0, 0.8);
+  background: rgba(255, 0, 0, 0.85);
   color: #fff;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 2rem;
+  }
+
+  header p {
+    font-size: 1rem;
+  }
+
+  .upload-section {
+    width: 90%;
+    padding: 18px;
+  }
+
+  #gallery {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
 }
